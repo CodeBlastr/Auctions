@@ -76,7 +76,7 @@ class AuctionsController extends AuctionsAppController {
     		$this->Auction->create();
     		if ($this->Auction->saveAll($this->request->data)) {
     			$this->Session->setFlash(__('Auction saved.'));
-    			$this->redirect(array('action' => 'view', $this->Auction->id));
+    			$this->redirect(array('admin' => false, 'action' => 'view', $this->Auction->id));
     		}
     	}
 		$this->set('types', $this->Auction->types());
@@ -107,7 +107,7 @@ class AuctionsController extends AuctionsAppController {
 				if ( isset($this->request->data['SaveAndContinue']) ) {
 					$this->redirect(array('action' => 'edit', $this->Auction->id));
 				} else {
-					$this->redirect(array('action' => 'view', $this->Auction->id));
+					$this->redirect(array('admin' => false, 'action' => 'view', $this->Auction->id));
 				}
             }
 		}

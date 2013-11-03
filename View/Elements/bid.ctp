@@ -37,7 +37,7 @@ $highestBid = (isset($auction['AuctionBid'][0]['amount'])) ? '$'.ZuhaInflector::
 			<?php echo $this->Form->hidden('TransactionItem.model', array('value' => 'Auction')); ?>
 			<?php echo $this->Form->hidden('TransactionItem.foreign_key', array('value' => $auction['Auction']['id'])); ?>
 			<?php echo $this->Form->hidden('TransactionItem.price', array('value' => $auction['Auction']['price'])); ?>
-			<?php echo $this->Form->hidden('TransactionItem.quanity', array('value' => 1)); ?>
+			<?php echo $this->Form->hidden('TransactionItem.quantity', array('value' => 1)); ?>
 			<?php echo $this->Form->submit('Buy Now', array('class' => 'btn btn-primary btn-mini')); ?>
 			<?php $this->Form->end(); ?>
 		</div>

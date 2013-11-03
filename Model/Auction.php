@@ -52,6 +52,9 @@ class Auction extends AuctionsAppModel {
         );
     
 	public function __construct($id = null, $table = null, $ds = null) {
+		if (CakePlugin::loaded('Media')) {
+			$this->actsAs[] = 'Media.MediaAttachable';
+		}
 		if (CakePlugin::loaded('Categories')) {
 			$this->hasAndBelongsToMany['Category'] = array(
 	            'className' => 'Categories.Category',
@@ -149,7 +152,8 @@ class Auction extends AuctionsAppModel {
     public function origin_afterFind(Model $Model, $results = array(), $primary = false) {
     	if ($Model->name == 'TransactionItem') {
 	        $ids = Set::extract('/TransactionItem/foreign_key', $results);
-	        $auctions = $this->_concatName($this->find('all', array('conditions' => array($this->alias . '.id' => $ids), 'contain' => array('Option'))));
+	        $auctions = $this->_concatName($this->find('all', array('conditions' => array($this->alias . '.id' => $ids), 'callbacks' => false)));
+			exit;
 	        $names = Set::combine($auctions, '{n}.Auction.id', '{n}.Auction.name');
 	        $i = 0;
 	        foreach ($results as $result) {
