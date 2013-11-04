@@ -8,8 +8,35 @@ class Auction extends AuctionsAppModel {
     public $filterPrice = true;
 
 	public $validate = array(
-		'name' => array('notempty'),
-		'started' => array('notempty'),
+		'name' => array(
+			'notempty' => array(
+				'rule' => 'notEmpty',
+				'allowEmpty' => true, 
+				'message' => 'Please enter an auction name.',
+				'required' => 'create'
+				)
+			),
+		'ended' => array(
+			'notempty' => array(
+				'rule' => 'notEmpty',
+				'allowEmpty' => true, 
+				'message' => 'Please enter an end date',
+				'required' => 'create'
+				),
+			'checkHighBid' => array(
+				'rule' => array('_checkEndDate'),
+				'allowEmpty' => false, 
+				'message' => 'Please enter a end date after today, and after your start date.',
+				)
+			),
+		'started' => array(
+			'notempty' => array(
+				'rule' => 'notEmpty',
+				'allowEmpty' => true, 
+				'message' => 'Please enter a start date.',
+				'required' => 'create'
+				)
+			)
         );
 
 	public $order = '';
@@ -74,6 +101,21 @@ class Auction extends AuctionsAppModel {
 		
 		$this->categorizedParams = array('conditions' => array($this->alias.'.parent_id' => null));
 		$this->order = array($this->alias . '.' . 'price');
+	}
+
+/**
+ * check end date validation
+ */
+	public function _checkEndDate() {
+		if (!empty($this->data[$this->alias]['ended'])) {
+			if ($this->data[$this->alias]['ended'] <= $this->data[$this->alias]['started']) {
+				return false;
+			}
+			if ($this->data[$this->alias]['ended'] <= date('Y-m-d h:i:s')) {
+				return false;
+			}
+		}
+		return true;
 	}
     
 /**

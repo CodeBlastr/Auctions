@@ -17,6 +17,11 @@ class AuctionBid extends AuctionsAppModel {
 				'allowEmpty' => false, 
 				'message' => 'Your bid should be higher than the current highest bid.',
 				),
+			'checkStartBid' => array(
+				'rule' => array('_checkStartBid'),
+				'allowEmpty' => false, 
+				'message' => 'Your bid is lower than the lowest allowed starting bid.',
+				),
 			)
 		);
 
@@ -37,10 +42,26 @@ class AuctionBid extends AuctionsAppModel {
 		)
 	);
 	
+/**
+ * Check highest bid validation
+ */
 	public function _checkHighestBid() {
 		if (!empty($this->data['AuctionBid']['auction_id'])) {
 			$highestBid = $this->field('amount', array('AuctionBid.auction_id' => $this->data['AuctionBid']['auction_id']), 'AuctionBid.amount DESC');
 			if ($highestBid > $this->data['AuctionBid']['amount']) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+/**
+ * Check starting bid validation
+ */
+	public function _checkStartBid() {
+		if (!empty($this->data['AuctionBid']['auction_id'])) {
+			$minimumBid = $this->Auction->field('start', array('Auction.id' => $this->data['AuctionBid']['auction_id']));
+			if ($this->data['AuctionBid']['amount'] < $minimumBid) {
 				return false;
 			}
 		}

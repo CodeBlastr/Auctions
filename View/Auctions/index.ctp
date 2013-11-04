@@ -48,7 +48,7 @@ $this->set('forms_sort', array(
 ));
 // set contextual search options
 $this->set('forms_search', array(
-    'url' => '/products/products/index/auction/', 
+    'url' => '/auctions/auctions/index/', 
 	'inputs' => array(
 		array(
 			'name' => 'contains:name', 
@@ -63,10 +63,10 @@ $this->set('forms_search', array(
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(
     array(
-        'heading' => 'Products',
+        'heading' => 'Auctions',
         'items' => array(
-            $this->Html->link(__('List'), array('controller' => 'products', 'action' => 'index')),
-            $this->Html->link(__('Add'), array('controller' => 'products', 'action' => 'add')),
+            $this->Html->link(__('List'), array('controller' => 'auctions', 'action' => 'index')),
+            $this->Html->link(__('Add'), array('controller' => 'auctions', 'action' => 'add')),
         )
     )
 )));
