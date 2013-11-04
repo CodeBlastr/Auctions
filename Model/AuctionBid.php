@@ -69,7 +69,7 @@ class AuctionBid extends AuctionsAppModel {
  */
 	public function notifySeller($auction, $options = array()){
 		// note we need to add a field to the auction model called sellerid
-		$this->__sendMail($auction['Seller']['email'],'Webpages.Auctioneer Expired Auction', $auction);	
+		$this->__sendMail($auction['Seller']['email'],'Webpages.Auctioneer Expired Auction', $auction);
 	}
 	
 /**

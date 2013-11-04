@@ -1,35 +1,30 @@
-<h1>Auctions</h1>
+<?php // used on beefjockey don't edit unless you copy it to that site ?>
 <div class="auctions">
+	<h1>Auctions</h1>
 	<?php if (!empty($auctions)) : ?>
 	    <?php foreach ($auctions as $auction) : ?>
 	    	<?php $highestBid = (isset($auction['AuctionBid'][0]['amount'])) ? '$'.ZuhaInflector::pricify($auction['AuctionBid'][0]['amount']) : 'no bids'; ?>
 			<div class="ad-row media row-fluid">
-				<div class="span2">
-					<?php
-					echo $this->Html->link(
-						$this->Media->display($auction['Media'][0], array(
-							'width' => 181, 'height' => 121, 'alt' => $auction['Auction']['name']
-						)),
-						array('plugin' => 'auctions', 'controller' => 'auctions', 'action' => 'view', $auction['Auction']['id']), array('class' => 'pull-left', 'escape' => false)
-					); ?>
+				<div class="span2 col-md-2">
+					<?php echo $this->Html->link($this->Media->display($auction['Media'][0], array('width' => 181, 'height' => 121, 'alt' => $auction['Auction']['name'])), array('plugin' => 'auctions', 'controller' => 'auctions', 'action' => 'view', $auction['Auction']['id']), array('class' => 'pull-left', 'escape' => false)); ?>
 				</div>
-				<div class="span7">
+				<div class="span7 col-md-7">
 					<div class="media-body">
 						<h4 class="media-heading"><?php echo $this->Html->link($auction['Auction']['name'], array('plugin' => 'auctions', 'controller' => 'auctions', 'action' => 'view', $auction['Auction']['id'])); ?></h4>
 						<div class="metas">
 							from <?php echo $this->Html->link($auction['Seller']['full_name'], array('plugin'=>'users', 'controller'=>'users', 'action'=>'view', $auction['Seller']['id'])) ?>
-							<div> 
-								<i class="icon-time"></i> <b><time datetime="<?php echo date('c', strtotime($auction['Auction']['ended']))?>"><?php echo $this->Time->timeAgoInWords($auction['Auction']['ended'])?></time> left</b>
-							</div>
-						</div>					
-						
-				
+							<?php if ($auction['Auction']['is_expired'] == true) : ?>
+								<label class="alert alert-danger">Expired</label>
+							<?php else : ?>
+								<i class="icon-time"></i><b><time datetime="<?php echo date('c', strtotime($auction['Auction']['ended']))?>"><?php echo $this->Time->timeAgoInWords($auction['Auction']['ended']); ?></time> left</b>
+							<?php endif; ?>
+						</div>
 						<?php echo $this->Text->truncate($auction['Auction']['description']) ?>
 					</div>
 				</div>
-				<div class="span3">
+				<div class="span3 col-md-3">
 					<div class="price-tag">
-						<?php echo $this->Html->link($highestBid, array('action' => 'view', $auction['Auction']['id'])); ?>
+						<?php echo $auction['Auction']['is_expired'] == true ? null : $this->Html->link($highestBid, array('action' => 'view', $auction['Auction']['id'])); ?>
 					</div>
 				</div>	
 			</div>

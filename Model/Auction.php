@@ -9,6 +9,7 @@ class Auction extends AuctionsAppModel {
 
 	public $validate = array(
 		'name' => array('notempty'),
+		'started' => array('notempty'),
         );
 
 	public $order = '';
@@ -82,6 +83,7 @@ class Auction extends AuctionsAppModel {
  * @return boolean
  */
     public function beforeSave($options = array()) {
+    	$this->data = $this->cleanData($this->data);
         $this->Behaviors->attach('Media.MediaAttachable');
         return parent::beforeSave($options);
     }
@@ -94,10 +96,33 @@ class Auction extends AuctionsAppModel {
  * @return array
  */
 	public function afterFind($results, $primary = false) {
-		$this->expire(); // expires ended auctions, but we probably will want to have this in a different spot (eg. cron) on a higher traffic site
+		!empty($results) ? $results = $this->expire($results) : null; // expires ended auctions, but we probably will want to have this in a different spot (eg. cron) on a higher traffic site
+		$results = $this->reverseOutput($results);
 		return parent::afterFind($results, $primary = false);
-	}    
+	}
 
+/**
+ * Reverse Output method
+ * 
+ * @param array $data
+ */
+	public function reverseOutput($data = array()) {
+		for($i = 0; $i < count($data); ++$i) {
+			if($data[$i][$this->alias]['type'] == 'reverse') {
+				$time = time() - strtotime($data[$i][$this->alias]['started']);
+				if ($time > 0) { // else the auction hasn't started yet
+				 	// number of intervals that have passed
+					$intervals = floor($time / $data[$i][$this->alias]['interval']);
+					$data[$i][$this->alias]['_intervals'] = $intervals;
+					// the price minus the intervals multiplied times the increment value
+					$data[$i][$this->alias]['price'] = $data[$i][$this->alias]['price'] - ($intervals * $data[$i][$this->alias]['increment']);
+					// the price if the floor has been reached
+					$data[$i][$this->alias]['price'] = $data[$i][$this->alias]['price'] > $data[$i][$this->alias]['floor'] ? $data[$i][$this->alias]['price'] : $data[$i][$this->alias]['floor'];
+				}
+			}
+		}
+		return $data;
+	}
 
 /**
  * Check auction expiration 
@@ -109,7 +134,7 @@ class Auction extends AuctionsAppModel {
  * @param array $options
  * @return array
  */
-	public function expire(array $data = array(), array $options = array()){
+	public function expire($data = array(), $options = array()){		
 		if(!empty($data[$this->alias])){ //handles single auctions
 			$data[0] = $data;
 			$single = true;
@@ -122,16 +147,17 @@ class Auction extends AuctionsAppModel {
 			$count = count($data); // order is important because we are using unset() in the loop
 			for ($i = 0; $i < $count; ++$i) {
 				if(!empty($data[$i][$this->alias]['is_expired'])) {
-					unset($data[$i]);
+					// unset($data[$i]); // these unsets are causing problems with pagination, and page data (we just set is_expired to 1 below instead, handle it in the controller or view)
 				}
 				if(!empty($data[$i][$this->alias]['ended']) && strtotime($data[$i][$this->alias]['ended']) < time()) {
 					$this->id = $data[$i][$this->alias]['id'];
 					if ($this->saveField('is_expired', 1, false)) {
-						$data[$i][$this->alias]['type'] == 'auction' ? $this->AuctionBid->finishAuction($data[$i], $options) : null;
+						$data[$i][$this->alias]['is_expired'] = 1;
+						$this->AuctionBid->finishAuction($data[$i], $options);
 					} else {
 						throw new Exception(__('Error expiring auctions, please alert an administrator.'));	
 					}
-					unset($data[$i]);
+					// unset($data[$i]); // these unsets are causing problems with pagination, and page data (we just set is_expired to 1 above instead, handle it in the controller or view)
 				}
 			}
 		}
@@ -141,6 +167,17 @@ class Auction extends AuctionsAppModel {
 		}
 		return $data;
 	}
+
+/**
+ * Clean data method
+ * 
+ */
+ 	public function cleanData($data) {
+ 		if (isset($data[$this->alias]['is_expired']) && empty($data[$this->alias]['is_expired'])) {
+ 			$data[$this->alias]['is_expired'] = 0;
+ 		}
+		return $data;
+ 	}
 
 /**
  * origin_afterFind callback

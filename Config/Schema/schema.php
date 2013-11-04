@@ -39,6 +39,7 @@ class AuctionsSchema extends CakeSchema {
 		'reserve' => array('type' => 'float', 'null' => true, 'default' => null, 'comment' => 'Reserve price'),
 		'increment' => array('type' => 'float', 'null' => true, 'default' => null, 'comment' => 'Minimum amount you can bid above current high bid.'),
 		'interval' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'comment' => 'The time - in seconds - between reverse auction bid lowering'),
+		'floor' => array('type' => 'float', 'null' => true, 'default' => null, 'comment' => 'Lowest price a reverse auction can hit.'),
 		'extension' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'comment' => 'The time - in seconds - to add each time a bid is placed'),
 		'weight' => array('type' => 'float', 'null' => true, 'default' => null),
 		'height' => array('type' => 'float', 'null' => true, 'default' => null),

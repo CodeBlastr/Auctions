@@ -9,6 +9,8 @@
 			<?php echo $this->Form->input('Auction.price', array('label' => 'Buy it Now Price', 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999')); ?>
 			<?php echo $this->Form->input('Auction.start', array('label' => 'Starting bid', 'default' => 0, 'type' => 'number', 'step' => '0.01', 'min' => '0', 'max' => '99999999999')); ?>
 			<?php echo $this->Form->input('Auction.interval', array('label' => 'Reverse Auction Time Incremet (secs)', 'type' => 'number', 'step' => '1', 'min' => '0', 'max' => '99999999999')); ?>
+			<?php echo $this->Form->input('Auction.increment', array('label' => 'Reverse Auction Price Increment (0.00)', 'type' => 'number', 'step' => '1', 'min' => '0', 'max' => '99999999999')); ?>
+			<?php echo $this->Form->input('Auction.floor', array('label' => 'Lowest Price for a Reverse Auction (0.00)', 'type' => 'number', 'step' => '1', 'min' => '0', 'max' => '99999999999')); ?>
 			<?php echo $this->Form->input('Auction.started', array('type' => 'datetimepicker', 'label' => 'Date & Time to Start Auction')); ?>
 			<?php echo $this->Form->input('Auction.ended', array('type' => 'datetimepicker', 'label' => 'Date & Time to End Auction')); ?>
 			</fieldset>
