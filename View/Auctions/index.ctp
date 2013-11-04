@@ -3,8 +3,7 @@
 	<h1>Auctions</h1>
 	<?php if (!empty($auctions)) : ?>
 	    <?php foreach ($auctions as $auction) : ?>
-	    	<?php $highestBid = (isset($auction['AuctionBid'][0]['amount'])) ? '$'.ZuhaInflector::pricify($auction['AuctionBid'][0]['amount']) : 'no bids'; ?>
-			<div class="ad-row media row-fluid">
+	    	<div class="ad-row media row-fluid">
 				<div class="span2 col-md-2">
 					<?php echo $this->Html->link($this->Media->display($auction['Media'][0], array('width' => 181, 'height' => 121, 'alt' => $auction['Auction']['name'])), array('plugin' => 'auctions', 'controller' => 'auctions', 'action' => 'view', $auction['Auction']['id']), array('class' => 'pull-left', 'escape' => false)); ?>
 				</div>
@@ -24,7 +23,7 @@
 				</div>
 				<div class="span3 col-md-3">
 					<div class="price-tag">
-						<?php echo $auction['Auction']['is_expired'] == true ? null : $this->Html->link($highestBid, array('action' => 'view', $auction['Auction']['id'])); ?>
+						<?php echo $this->Html->link($auction['Auction']['_displayPrice'], array('action' => 'view', $auction['Auction']['id'])); ?>
 					</div>
 				</div>	
 			</div>

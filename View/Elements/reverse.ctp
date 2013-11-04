@@ -4,7 +4,7 @@
 	<hr />
 	<div class="row">
 		<div class="span6">
-			<?php echo ZuhaInflector::pricify($auction['Auction']['price'], array('currency' => 'USD')); ?>
+			<?php echo $auction['Auction']['_displayPrice']; ?>
 		</div>
 		<div class="span6">
 			<?php echo $this->Form->create('TransactionItem', array('url' => array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'add'), 'class' => 'form-inline')); ?>

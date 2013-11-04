@@ -45,7 +45,7 @@ class AuctionsController extends AuctionsAppController {
  */
 	public function index() {
 		$this->paginate['conditions']['Auction.is_expired'] = 0;
-		$this->paginate['conditions']['Auction.started >'] = date('Y-m-d h:i:s');
+		$this->paginate['conditions']['Auction.started <'] = date('Y-m-d h:i:s');
 		$this->paginate['contain'][] = 'Seller';
 		$this->set('title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);

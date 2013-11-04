@@ -97,16 +97,16 @@ class Auction extends AuctionsAppModel {
  */
 	public function afterFind($results, $primary = false) {
 		!empty($results) ? $results = $this->expire($results) : null; // expires ended auctions, but we probably will want to have this in a different spot (eg. cron) on a higher traffic site
-		$results = $this->reverseOutput($results);
+		$results = $this->output($results);
 		return parent::afterFind($results, $primary = false);
 	}
 
 /**
- * Reverse Output method
+ * Output method
  * 
  * @param array $data
  */
-	public function reverseOutput($data = array()) {
+	public function output($data = array()) {
 		for($i = 0; $i < count($data); ++$i) {
 			if($data[$i][$this->alias]['type'] == 'reverse') {
 				$time = time() - strtotime($data[$i][$this->alias]['started']);
@@ -120,6 +120,11 @@ class Auction extends AuctionsAppModel {
 					$data[$i][$this->alias]['price'] = $data[$i][$this->alias]['price'] > $data[$i][$this->alias]['floor'] ? $data[$i][$this->alias]['price'] : $data[$i][$this->alias]['floor'];
 				}
 			}
+			// decide what price to show the user
+			$price = isset($data[$i]['AuctionBid'][0]['amount']) ? ZuhaInflector::pricify($data[$i]['AuctionBid'][0]['amount'], array('currency' => 'USD')) : 'no bids';
+		    $price = $data[$i][$this->alias]['type'] == 'reverse' ? ZuhaInflector::pricify($data[$i][$this->alias]['price'], array('currency' => 'USD')) : $price;
+			$price = $auction['Auction']['is_expired'] == true ? 'expired' : $price;
+		    $data[$i][$this->alias]['_displayPrice'] = $price;
 		}
 		return $data;
 	}
