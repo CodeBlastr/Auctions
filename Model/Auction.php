@@ -213,4 +213,23 @@ class Auction extends AuctionsAppModel {
  	public function types() {
  		return $this->types;
  	}
+
+/**
+ * After Successful Payment method
+ * 
+ * @param array $data A payment object
+ */
+	public function afterSuccessfulPayment($data) {
+		foreach ($data['TransactionItem'] as $transactionItem) {
+			if ($transactionItem['model'] == 'Auction') {
+				$this->id = $transactionItem['foreign_key'];
+				if ($this->saveField('is_expired', 1, false)) {
+					// do nothing it is saved
+				} else {
+					throw new Exception(__('Problem reserving item, please alert an administrator.'));
+				}
+			}
+		}
+		return true;
+	}
 }
