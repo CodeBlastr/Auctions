@@ -1,7 +1,7 @@
 <div class="auction view media row-fluid" id="<?php echo __('auction%s', $auction['Auction']['id']); ?>" itemscope itemtype="http://schema.org/Auction">
 	<h2 class="media-heading" itemprop="name"><?php echo $auction['Auction']['name']; ?></h2>
 	<div class="item auction gallery pull-left media-object">
-        <?php echo $this->Media->display($auction['Media'][0], array('width' => 181, 'height' => 121, 'alt' => $auction['Auction']['name'])); ?>
+        <?php echo $this->Media->carousel('default', array('data' => $auction, 'width' => 181, 'height' => 121, 'alt' => $auction['Auction']['name'])); ?>
     </div>
 
     <div class="item auction description span5 pull-left media-body">
