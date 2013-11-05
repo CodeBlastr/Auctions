@@ -5,7 +5,7 @@
 	    <?php foreach ($auctions as $auction) : ?>
 	    	<div class="ad-row media row-fluid">
 				<div class="span2 col-md-2">
-					<?php echo $this->Html->link($this->Media->display($auction['Media'][0], array('width' => 181, 'height' => 121, 'alt' => $auction['Auction']['name'])), array('plugin' => 'auctions', 'controller' => 'auctions', 'action' => 'view', $auction['Auction']['id']), array('class' => 'pull-left', 'escape' => false)); ?>
+					<?php echo $this->Html->link($this->Media->display($auction['Media'][0], array('width' => 108, 'alt' => $auction['Auction']['name'])), array('plugin' => 'auctions', 'controller' => 'auctions', 'action' => 'view', $auction['Auction']['id']), array('class' => 'pull-left', 'escape' => false)); ?>
 				</div>
 				<div class="span7 col-md-7">
 					<div class="media-body">

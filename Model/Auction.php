@@ -62,10 +62,10 @@ class Auction extends AuctionsAppModel {
 			'className' => 'Users.User',
 			'joinTable' => 'auction_bids',
 			'foreignKey' => 'auction_id',
-			'associationForeignKey' => 'user_id',
-			'order' => array('amount' => 'DESC'),
+			'associationForeignKey' => 'bidder_id',
+			'order' => array('amount' => 'DESC', ),
 			'limit' => 1
-			)
+			),
 		);
 
 	//auctions association.
@@ -193,10 +193,7 @@ class Auction extends AuctionsAppModel {
 		if(isset($data[0][$this->alias])) { //this handles many Auctions
 			$count = count($data); // order is important because we are using unset() in the loop
 			for ($i = 0; $i < $count; ++$i) {
-				if(!empty($data[$i][$this->alias]['is_expired'])) {
-					// unset($data[$i]); // these unsets are causing problems with pagination, and page data (we just set is_expired to 1 below instead, handle it in the controller or view)
-				}
-				if(!empty($data[$i][$this->alias]['ended']) && strtotime($data[$i][$this->alias]['ended']) < time()) {
+				if(empty($data[$i][$this->alias]['is_expired']) && !empty($data[$i][$this->alias]['ended']) && strtotime($data[$i][$this->alias]['ended']) < time()) {
 					$this->id = $data[$i][$this->alias]['id'];
 					if ($this->saveField('is_expired', 1, false)) {
 						$data[$i][$this->alias]['is_expired'] = 1;

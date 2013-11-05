@@ -159,11 +159,17 @@ class AuctionsController extends AuctionsAppController {
 		}
 		$auction = $this->Auction->find('first', array(
 			'conditions' => array('Auction.id' => $id),
-			'contain' => array('AuctionBid' => array(
+			'contain' => array(
+				'AuctionBid' => array(
 					'limit' => 1,
 					'order' => array('AuctionBid.amount' => 'DESC')
-				), )
-		));
+					),
+				'Winner'
+				)
+			));
+		$currentUser = $this->Session->read('Auth.User.id');
+		$winningUser = $auction['Winner'][0]['id'];
+		$this->set('iAmWinning', $iAmWinning = $currentUser == $winningUser ? 1 : 0);
 		$this->set('title_for_layout', $auction['Auction']['name'] . ' < Auctions | ' . __SYSTEM_SITE_NAME);
 		$this->set(compact('auction'));
 		$auction['Auction']['type'] == 'reverse' ? $this->view = 'view_reverse' : null;

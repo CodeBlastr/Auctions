@@ -22,6 +22,11 @@ class AuctionBid extends AuctionsAppModel {
 				'allowEmpty' => false, 
 				'message' => 'Your bid is lower than the lowest allowed starting bid.',
 				),
+			'checkExpired' => array(
+				'rule' => array('_checkExpired'),
+				'allowEmpty' => false, 
+				'message' => 'Sorry, your bid was a little too late.',
+				),
 			)
 		);
 
@@ -32,7 +37,7 @@ class AuctionBid extends AuctionsAppModel {
 			'conditions' => '',
 			'fields' => ''
 		),
-		'Bidder' => array(
+		'HighBidder' => array(
 			'className' => 'Users.User',
 			'foreignKey' => 'bidder_id',
 			'conditions' => '',
@@ -45,10 +50,23 @@ class AuctionBid extends AuctionsAppModel {
 /**
  * Check highest bid validation
  */
+	public function _checkExpired() {
+		if (!empty($this->data['AuctionBid']['auction_id'])) {
+			$expired = $this->Auction->field('is_expired', array('Auction.id' => $this->data['AuctionBid']['auction_id']));
+			if ($expired) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+/**
+ * Check highest bid validation
+ */
 	public function _checkHighestBid() {
 		if (!empty($this->data['AuctionBid']['auction_id'])) {
 			$highestBid = $this->field('amount', array('AuctionBid.auction_id' => $this->data['AuctionBid']['auction_id']), 'AuctionBid.amount DESC');
-			if ($highestBid > $this->data['AuctionBid']['amount']) {
+			if ($highestBid >= $this->data['AuctionBid']['amount']) {
 				return false;
 			}
 		}
@@ -112,7 +130,7 @@ class AuctionBid extends AuctionsAppModel {
  * Find the highest bid and return the bid and the user. 
  */
 	public function getWinner($auctionId, $options = array()) {
-		return $this->find('first', array('conditions' => array('AuctionBid.auction_id' => $auctionId), 'contain' => array('Bidder')));
+		return $this->find('first', array('conditions' => array('AuctionBid.auction_id' => $auctionId), 'contain' => array('HighBidder')));
 	}
 	
 }

@@ -27,13 +27,13 @@
 <?php
 // set contextual search options
 $this->set('forms_search', array(
-    'url' => '/products/products/index/', 
+    'url' => '/auctions/auctions/index/', 
 	'inputs' => array(
 		array(
 			'name' => 'contains:name', 
 			'options' => array(
 				'label' => '', 
-				'placeholder' => 'Product Search',
+				'placeholder' => 'Auction Search',
 				'value' => !empty($this->request->params['named']['contains']) ? substr($this->request->params['named']['contains'], strpos($this->request->params['named']['contains'], ':') + 1) : null,
 				)
 			),
@@ -42,14 +42,9 @@ $this->set('forms_search', array(
 // set the contextual menu items
 $this->set('context_menu', array('menus' => array(
     array(
-		'heading' => 'Products',
+		'heading' => 'Auction',
 		'items' => array(
 			$this->Html->link(__('Dashboard'), array('admin' => true, 'controller' => 'products', 'action' => 'dashboard')),
-			)
-		),
-	array(
-		'heading' => 'Product',
-		'items' => array(
 			$this->Html->link(__d('products', 'List'), array('action' => 'index')),
 			$this->Html->link(__d('products', 'Edit'), array('action' => 'edit', $auction['Auction']['id'])),
 			$this->Html->link(__d('products', 'Delete'), array('action' => 'delete', $auction['Auction']['id']), null, __('Are you sure you want to delete %s?', $auction['Auction']['name'])),
