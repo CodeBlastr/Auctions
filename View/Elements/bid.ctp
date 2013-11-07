@@ -4,12 +4,22 @@ $highestBid = (isset($auction['AuctionBid'][0]['amount'])) ? '$'.ZuhaInflector::
 ?>
 
 <div class="row-fluid">
+	
 	<div class="span6">
 		Current bid:
 	</div>
 	<div class="span6">
 		<b><?php echo $highestBid ?></b>
 	</td>
+</div>
+<div class="row-fluid">
+	<div class="span6">
+		Starting bid:
+	</div>
+	<div class="span6">
+		<b><?php echo ZuhaInflector::pricify( $auction['Auction']['start'], array('currency' => 'USD')); ?></b>
+	</td>
+</div>
 </div>
 <div class="row-fluid">
 	<div class="span6">
