@@ -17,6 +17,11 @@ class AuctionBid extends AuctionsAppModel {
 				'allowEmpty' => false, 
 				'message' => 'Your bid should be higher than the current highest bid.',
 				),
+			'checkBidIncrement' => array(
+				'rule' => array('_checkBidIncrement'), 
+				'allowEmpty' => false, 
+				'message' => 'Your bid should be higher at least $0.75 higher than the current bid.',
+				),
 			'checkStartBid' => array(
 				'rule' => array('_checkStartBid'),
 				'allowEmpty' => false, 
@@ -73,6 +78,20 @@ class AuctionBid extends AuctionsAppModel {
 		return true;
 	}
 	
+	
+/**
+ * Check Bid Increment
+ */
+	public function _checkBidIncrement() {
+		if (!empty($this->data['AuctionBid']['auction_id'])) {
+			$highestBid = $this->field('amount', array('AuctionBid.auction_id' => $this->data['AuctionBid']['auction_id']), 'AuctionBid.amount DESC');
+			if ($highestBid + 0.75 >= $this->data['AuctionBid']['amount']) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 /**
  * Check starting bid validation
  */
@@ -123,6 +142,17 @@ class AuctionBid extends AuctionsAppModel {
 			$emailarr = $auction + $winner;
 			$this->__sendMail($winner['Bidder']['email'],'Webpages.Auction Winner Notification', $emailarr);	
 		}
+	}
+	
+	
+/**
+ * Notify Bidder that they have been outbid on Auction.
+ * @param array $results
+ * @return array
+ * 
+ */
+	public function notifyOutbid($auction, $options = array()){
+		
 	}
 
 /**
