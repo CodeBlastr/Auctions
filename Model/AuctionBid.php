@@ -20,7 +20,7 @@ class AuctionBid extends AuctionsAppModel {
 			'checkBidIncrement' => array(
 				'rule' => array('_checkBidIncrement'), 
 				'allowEmpty' => false, 
-				'message' => 'Your bid should be higher at least $0.75 higher than the current bid.',
+				'message' => 'Your bid should be at least $1.00 higher than the current bid.',
 				),
 			'checkStartBid' => array(
 				'rule' => array('_checkStartBid'),
@@ -51,6 +51,14 @@ class AuctionBid extends AuctionsAppModel {
 			'limit' => 1
 		)
 	);
+
+/**
+ * After Save Function 
+ * Run afetr save
+ */	
+ 	public function afterSave($created, $options = array()){
+ 		$this->notifyOutbid($this->data, $options);
+ 	}
 	
 /**
  * Check highest bid validation
@@ -77,6 +85,34 @@ class AuctionBid extends AuctionsAppModel {
 		}
 		return true;
 	}
+
+	
+/**
+ * Notify Bidder who has just been outbid.
+ * @param array $results
+ * @return array
+ * 
+ */
+	public function notifyOutbid($bid, $options = array()){
+		if($outbid = $this->getOutbid($bid[$this->alias]['auction_id'], $options)){
+			App::uses('User', 'Users.Model');
+			$User = new User;
+			if($email = $User->field('email', array('User.id' => $outbid['AuctionBid']['bidder_id']))){
+				$this->__sendMail($email,'Webpages.Auction Outbid Notification', $auction);
+			}		
+		}
+	}
+	
+/**
+ * Get Bidder who has just been outbid.
+ * @param array $results
+ * @return array
+ * 
+ */
+	public function getOutbid($auctionId, $options = array()){
+		$outbidUser = $this->find('all', array('limit' => 2, 'conditions' => array('AuctionBid.auction_id' => $auctionId), 'order' => array('amount' => 'DESC')));
+		return isset($outbidUser[1]) ? $outbidUser[1] : false;
+	}
 	
 	
 /**
@@ -85,7 +121,7 @@ class AuctionBid extends AuctionsAppModel {
 	public function _checkBidIncrement() {
 		if (!empty($this->data['AuctionBid']['auction_id'])) {
 			$highestBid = $this->field('amount', array('AuctionBid.auction_id' => $this->data['AuctionBid']['auction_id']), 'AuctionBid.amount DESC');
-			if ($highestBid + 0.75 >= $this->data['AuctionBid']['amount']) {
+			if ($highestBid + 0.99 >= $this->data['AuctionBid']['amount']) {
 				return false;
 			}
 		}
@@ -143,17 +179,6 @@ class AuctionBid extends AuctionsAppModel {
 			$this->__sendMail($winner['Bidder']['email'],'Webpages.Auction Winner Notification', $emailarr);	
 		}
 	}
-	
-	
-/**
- * Notify Bidder that they have been outbid on Auction.
- * @param array $results
- * @return array
- * 
- */
-	public function notifyOutbid($auction, $options = array()){
-		
-	}
 
 /**
  * Get Winner method
@@ -162,5 +187,6 @@ class AuctionBid extends AuctionsAppModel {
 	public function getWinner($auctionId, $options = array()) {
 		return $this->find('first', array('conditions' => array('AuctionBid.auction_id' => $auctionId), 'contain' => array('HighBidder')));
 	}
+	
 	
 }

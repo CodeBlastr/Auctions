@@ -3,6 +3,16 @@
 	<p>This auction goes down in price by <?php echo ZuhaInflector::pricify($auction['Auction']['increment'], array('currency' => 'USD')); ?> every <?php echo $auction['Auction']['interval']; ?> seconds, until someone purchases it, or it hits the minimum price of <?php echo ZuhaInflector::pricify($auction['Auction']['floor'], array('currency' => 'USD')); ?>.</p>
 	<hr />
 	<div class="row">
+		<div class="span12">
+			<table style="border-top: 0px;">
+    			<tr>
+    				<td>Price Drop In:</td>
+    				<td><b><?php echo gmdate("H:i:s", $auction['Auction']['interval']) ?></td>
+    			</tr>
+    		</table>
+		</div>
+	</div>
+	<div class="row">
 		<div class="span6">
 			<?php echo $auction['Auction']['_displayPrice']; ?>
 		</div>
