@@ -157,6 +157,7 @@ class AuctionsController extends AuctionsAppController {
 		if (!$this->Auction->exists()) {
 			throw new NotFoundException(__('Invalid auction'));
 		}
+		
 		$auction = $this->Auction->find('first', array(
 			'conditions' => array('Auction.id' => $id),
 			'contain' => array(

@@ -195,6 +195,7 @@ class Auction extends AuctionsAppModel {
 			for ($i = 0; $i < $count; ++$i) {
 				if(empty($data[$i][$this->alias]['is_expired']) && !empty($data[$i][$this->alias]['ended']) && strtotime($data[$i][$this->alias]['ended']) < time()) {
 					$this->id = $data[$i][$this->alias]['id'];
+					//$this->AuctionBid->finishAuction($data[$i], $options);exit;
 					if ($this->saveField('is_expired', 1, false)) {
 						$data[$i][$this->alias]['is_expired'] = 1;
 						$this->AuctionBid->finishAuction($data[$i], $options);
