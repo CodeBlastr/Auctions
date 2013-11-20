@@ -107,8 +107,8 @@ class AuctionBid extends AuctionsAppModel {
  * 
  */
 	public function notifySeller($auction, $options = array()){
-		// note we need to add a field to the auction model called sellerid
-		$this->__sendMail($auction['Seller']['email'],'Webpages.Auctioneer Expired Auction', $auction);
+		$seller = $this->Auction->Seller->find('first', array('conditions' => array('Seller.id' => $auction['Auction']['seller_id'])));
+		$this->__sendMail($seller['Seller']['email'], 'Webpages.Auctioneer Expired Auction', $auction);
 	}
 	
 /**
@@ -118,10 +118,10 @@ class AuctionBid extends AuctionsAppModel {
  * 
  */	
 	public function notifyWinner($auction, $options = array()){
-		$winner = $this->getWinner($auction[$this->alias]['id'], $options);
+		$winner = $this->getWinner($auction['Auction']['id'], $options);		
 		if (!empty($winner)) { // there may not have been a winner
 			$emailarr = $auction + $winner;
-			$this->__sendMail($winner['Bidder']['email'],'Webpages.Auction Winner Notification', $emailarr);	
+			$this->__sendMail($winner['HighBidder']['email'],'Webpages.Auction Winner Notification', $emailarr);
 		}
 	}
 
@@ -130,7 +130,8 @@ class AuctionBid extends AuctionsAppModel {
  * Find the highest bid and return the bid and the user. 
  */
 	public function getWinner($auctionId, $options = array()) {
-		return $this->find('first', array('conditions' => array('AuctionBid.auction_id' => $auctionId), 'contain' => array('HighBidder')));
+		return $this->find('first', array('conditions' => array('AuctionBid.auction_id' => $auctionId), 'contain' => array('HighBidder'))); 
+		
 	}
 	
 }
