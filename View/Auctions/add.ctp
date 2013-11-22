@@ -13,7 +13,7 @@
 			<?php echo $this->Form->input('Auction.floor', array('label' => 'Lowest Price for a Reverse Auction (0.00)', 'type' => 'number', 'step' => '1', 'min' => '0', 'max' => '99999999999')); ?>
 			<?php echo $this->Form->input('Auction.started', array('type' => 'datetimepicker', 'label' => 'Date & Time to Start Auction')); ?>
 			<?php echo $this->Form->input('Auction.ended', array('type' => 'datetimepicker', 'label' => 'Date & Time to End Auction')); ?>
-			</fieldset>
+		</fieldset>
 		<fieldset>
 			<legend class="toggleClick"><?php echo __('Optional Details'); ?></legend>
 			<?php echo $this->Form->input('Auction.summary', array('type' => 'text', 'label' => 'Promo Text <br /><small><em>Used to entice people to view more about this item.</em></small>')); ?>

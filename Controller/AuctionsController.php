@@ -58,10 +58,11 @@ class AuctionsController extends AuctionsAppController {
 			'limit' => 1,
 			'order' => array('AuctionBid.amount' => 'DESC')
 		);
-		
+				
 		$this->set('title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('page_title_for_layout', __('Auctions') . ' | ' . __SYSTEM_SITE_NAME);
 		$this->set('auctions', $auctions = $this->paginate());
+		//debug($auctions); exit;
 		return $auctions;
 	}
 
@@ -165,7 +166,7 @@ class AuctionsController extends AuctionsAppController {
 					'limit' => 1,
 					'order' => array('AuctionBid.amount' => 'DESC')
 					),
-				'Winner'
+				'Winner', 
 				)
 			));
 		$currentUser = $this->Session->read('Auth.User.id');

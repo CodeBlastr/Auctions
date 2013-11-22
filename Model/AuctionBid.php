@@ -111,6 +111,7 @@ class AuctionBid extends AuctionsAppModel {
  */
 	public function getOutbid($auctionId, $options = array()){
 		$outbidUser = $this->find('all', array('limit' => 2, 'conditions' => array('AuctionBid.auction_id' => $auctionId), 'order' => array('amount' => 'DESC')));
+		//debug($outbidUser); exit;
 		return isset($outbidUser[1]) ? $outbidUser[1] : false;
 	}
 	

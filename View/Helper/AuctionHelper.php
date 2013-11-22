@@ -58,6 +58,11 @@ class AuctionHelper extends AppHelper {
  	public function latestAuctions() {
 	 	
 		$data = $this->Auction->find('all', array(
+			'contain' => array(
+				'AuctionBid' => array(
+					'limit' => 1,
+					'order' => array('AuctionBid.amount' => 'DESC')
+			)),
 			'order' => array(
 				'Auction.created' => 'DESC'
 				),
@@ -68,6 +73,11 @@ class AuctionHelper extends AppHelper {
 
 	public function featuredAuction(){
 		$data = $this->Auction->find('all', array(
+			'contain' => array(
+				'AuctionBid' => array(
+					'limit' => 1,
+					'order' => array('AuctionBid.amount' => 'DESC')
+			)),
 			'order' => array(
 				'Auction.created' => 'DESC'
 			),
@@ -82,6 +92,11 @@ class AuctionHelper extends AppHelper {
 			'conditions' => array(
 				'Auction.is_expired' => '0'
 			),
+			'contain' => array(
+				'AuctionBid' => array(
+					'limit' => 1,
+					'order' => array('AuctionBid.amount' => 'DESC')
+					)),
 			'order' => array(
 				'Auction.ended' =>  '> NOW( ) - INTERVAL 30 DAY'
 			 ), 
