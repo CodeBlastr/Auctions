@@ -58,7 +58,7 @@ class AuctionBid extends AuctionsAppModel {
  */	
  	public function afterSave($created, $options = array()){
  		$this->notifyOutbid($this->data, $options);
- 	}
+	 	}
 	
 /**
  * Check highest bid validation
@@ -98,10 +98,11 @@ class AuctionBid extends AuctionsAppModel {
 			App::uses('User', 'Users.Model');
 			$User = new User;
 			if($email = $User->field('email', array('User.id' => $outbid['AuctionBid']['bidder_id']))){
-				$this->__sendMail($email,'Webpages.Auction Outbid Notification', $auction);
+				$this->__sendMail($email,'Webpages.Auction Outbid Notification', $bid);
 			}		
 		}
 	}
+	
 	
 /**
  * Get Bidder who has just been outbid.
@@ -111,7 +112,6 @@ class AuctionBid extends AuctionsAppModel {
  */
 	public function getOutbid($auctionId, $options = array()){
 		$outbidUser = $this->find('all', array('limit' => 2, 'conditions' => array('AuctionBid.auction_id' => $auctionId), 'order' => array('amount' => 'DESC')));
-		//debug($outbidUser); exit;
 		return isset($outbidUser[1]) ? $outbidUser[1] : false;
 	}
 	

@@ -8,7 +8,6 @@ class AuctionBidsController extends AuctionsAppController {
 	public function add() { //added $auctions, $options = array() as params
 		if ($this->request->is('post')) {
 			$this->request->data('AuctionBid.bidder_id', $this->userId);
-			debug($this->request->data); exit;
 			if ($this->AuctionBid->save($this->request->data)) {
 				$this->Session->setFlash('Bid received');
 				$this->redirect($this->referer());
