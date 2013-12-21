@@ -13,7 +13,7 @@
 				    'after' => __(' %s')
 				));
 			echo __('<p>%s %s</p>', 
-					$this->Html->link($transactionItem['name'], '/auctions/auctions/view/'.$transactionItem['foreign_key'], null, __('Are you sure you want to leave this page?')), 
+					$this->Html->link($transactionItem['name'], '/auctions/auctions/view/' . $transactionItem['foreign_key'], null, __('Are you sure you want to leave this page?')),
 					$this->Html->link('<i class="icon-trash"></i>', array('plugin' => 'transactions', 'controller' => 'transaction_items', 'action' => 'delete', $transactionItem['id']), array('title' => 'Remove from cart', 'escape' => false))
 					);
 			
