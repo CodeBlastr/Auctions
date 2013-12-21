@@ -1,0 +1,44 @@
+language: php
+
+php:
+  - 5.4
+
+env:
+  - DB=mysql
+
+matrix:
+  include:
+    - php: 5.4
+      env:
+        - PHPCS=1
+
+before_script:
+  - git clone https://github.com/zuha/Zuha.git ../zuha && cd ../zuha
+  - rm -rf app/Plugin/Auctions
+  - mv ../Auctions-Zuha-Cakephp-Plugin app/Plugin/Auctions
+  - chmod -R 777 ../zuha/app/tmp
+  - chmod -R 777 ../zuha/lib/Cake/Console/Templates/skel/tmp/cache
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
+  - phpenv rehash
+  - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
+  - echo "<?php
+    class DATABASE_CONFIG {
+    public \$test = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'cakephp_test',
+      'host' => '0.0.0.0',
+      'login' => 'travis',
+      'persistent' => false,
+    );
+    }" > ../zuha/app/Config/database.php
+
+script:
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php,ctp --standard=CakePHP app/Plugin/Auctions; else cd app; ../lib/Cake/Console/cake test Auctions all --stderr; fi"
+
+notifications:
+  email:
+    recipients:
+      - support@buildrr.com
+    on_success: never
+    on_failure: always 
