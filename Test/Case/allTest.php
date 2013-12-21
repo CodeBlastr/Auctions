@@ -18,7 +18,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 
 		$behaviorPath = $modelPath . DS . 'Behavior';
 
-		$suite->addTestFile($testPath  . DS . 'AuctionTest.php');
+		$suite->addTestFile($pluginsPath . 'Answers' . $modelPath . DS . 'AuctionTest.php');
 
 		return $suite;
 	}
