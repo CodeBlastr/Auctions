@@ -165,6 +165,7 @@ class Auction extends AuctionsAppModel {
 			// decide what price to show the user
 			$price = isset($data[$i]['AuctionBid'][0]['amount']) ? ZuhaInflector::pricify($data[$i]['AuctionBid'][0]['amount'], array('currency' => 'USD')) : 'no bids';
 		    $price = $data[$i][$this->alias]['type'] == 'reverse' ? ZuhaInflector::pricify($data[$i][$this->alias]['price'], array('currency' => 'USD')) : $price;
+			//TODO-me where is this $auction from?
 			$price = $auction['Auction']['is_expired'] == true ? 'expired' : $price;
 		    $data[$i][$this->alias]['_displayPrice'] = $price;
 		}
