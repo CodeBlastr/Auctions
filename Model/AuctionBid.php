@@ -2,39 +2,51 @@
 App::uses('AuctionsAppModel', 'Auctions.Model');
 class AuctionBid extends AuctionsAppModel {
 
+/**
+ *
+ * @var string
+ */
 	public $name = 'AuctionBid';
 
+/**
+ *
+ * @var array
+ */
 	public $validate = array(
 		'amount' => array(
 			'notempty' => array(
 				'rule' => 'notEmpty',
-				'allowEmpty' => false, 
+				'allowEmpty' => false,
 				'message' => 'Please enter bid value',
 				'required' => 'create'
 				),
 			'checkHighBid' => array(
 				'rule' => array('_checkHighestBid'),
-				'allowEmpty' => false, 
+				'allowEmpty' => false,
 				'message' => 'Your bid should be higher than the current highest bid.',
 				),
 			'checkBidIncrement' => array(
-				'rule' => array('_checkBidIncrement'), 
-				'allowEmpty' => false, 
+				'rule' => array('_checkBidIncrement'),
+				'allowEmpty' => false,
 				'message' => 'Your bid should be at least $1.00 higher than the current bid.',
 				),
 			'checkStartBid' => array(
 				'rule' => array('_checkStartBid'),
-				'allowEmpty' => false, 
+				'allowEmpty' => false,
 				'message' => 'Your bid is lower than the lowest allowed starting bid.',
 				),
 			'checkExpired' => array(
 				'rule' => array('_checkExpired'),
-				'allowEmpty' => false, 
+				'allowEmpty' => false,
 				'message' => 'Sorry, your bid was a little too late.',
 				),
 			)
 		);
 
+/**
+ *
+ * @var array
+ */
 	public $belongsTo = array(
 		'Auction' => array(
 			'className' => 'Auctions.Auction',
@@ -53,15 +65,16 @@ class AuctionBid extends AuctionsAppModel {
 	);
 
 /**
- * After Save Function 
- * Run afetr save
- */	
+ * @param boolean $created
+ * @param array $options
+ */
  	public function afterSave($created, $options = array()){
  		$this->notifyOutbid($this->data, $options);
 	 	}
-	
+
 /**
- * Check highest bid validation
+ * Check Auction.is_expired
+ * @return boolean
  */
 	public function _checkExpired() {
 		if (!empty($this->data['AuctionBid']['auction_id'])) {
@@ -72,9 +85,10 @@ class AuctionBid extends AuctionsAppModel {
 		}
 		return true;
 	}
-	
+
 /**
  * Check highest bid validation
+ * @return boolean
  */
 	public function _checkHighestBid() {
 		if (!empty($this->data['AuctionBid']['auction_id'])) {
@@ -86,12 +100,11 @@ class AuctionBid extends AuctionsAppModel {
 		return true;
 	}
 
-	
+
 /**
  * Notify Bidder who has just been outbid.
- * @param array $results
- * @return array
- * 
+ * @param array $bid
+ * @param array $options
  */
 	public function notifyOutbid($bid, $options = array()){
 		if($outbid = $this->getOutbid($bid[$this->alias]['auction_id'], $options)){
@@ -99,25 +112,26 @@ class AuctionBid extends AuctionsAppModel {
 			$User = new User;
 			if($email = $User->field('email', array('User.id' => $outbid['AuctionBid']['bidder_id']))){
 				$this->__sendMail($email,'Webpages.Auction Outbid Notification', $bid);
-			}		
+			}
 		}
 	}
-	
-	
+
+
 /**
  * Get Bidder who has just been outbid.
- * @param array $results
- * @return array
- * 
+ * @param string $auctionId
+ * @param array $options
+ * @return array|boolean
  */
 	public function getOutbid($auctionId, $options = array()){
 		$outbidUser = $this->find('all', array('limit' => 2, 'conditions' => array('AuctionBid.auction_id' => $auctionId), 'order' => array('amount' => 'DESC')));
 		return isset($outbidUser[1]) ? $outbidUser[1] : false;
 	}
-	
-	
+
+
 /**
  * Check Bid Increment
+ * @return boolean
  */
 	public function _checkBidIncrement() {
 		if (!empty($this->data['AuctionBid']['auction_id'])) {
@@ -128,9 +142,10 @@ class AuctionBid extends AuctionsAppModel {
 		}
 		return true;
 	}
-	
+
 /**
  * Check starting bid validation
+ * @return boolean
  */
 	public function _checkStartBid() {
 		if (!empty($this->data['AuctionBid']['auction_id'])) {
@@ -143,38 +158,37 @@ class AuctionBid extends AuctionsAppModel {
 	}
 
 /**
- * Finish Auction method
- * 
+ * do any other auction wrap up stuff here
+ * @param array $auction
+ * @param array $options
  */
 	public function finishAuction($auction, $options = array()) {
 		if ($options['email'] !== false) {
 			/// then email the winner
-			$this->notifySeller($auction, $options); 
+			$this->notifySeller($auction, $options);
 			$this->notifyWinner($auction, $options);
 		}
 		// do any other auction wrap up stuff here, just don't know what that might be right now...
 	}
-	
-	
+
+
 /**
  * Notify Seller (Site Admin/Owner) that Auction Auction has Expired.
- * @param array $results
- * @return array
- * 
+ * @param array $auction
+ * @param array $options
  */
 	public function notifySeller($auction, $options = array()){
 		$seller = $this->Auction->Seller->find('first', array('conditions' => array('Seller.id' => $auction['Auction']['seller_id'])));
 		$this->__sendMail($seller['Seller']['email'], 'Webpages.Auctioneer Expired Auction', $auction);
 	}
-	
+
 /**
  * Notify Auction Bidder that auction has expired
- * @param array $results
- * @return array
- * 
- */	
+ * @param array $auction
+ * @param array $options
+ */
 	public function notifyWinner($auction, $options = array()){
-		$winner = $this->getWinner($auction['Auction']['id'], $options);		
+		$winner = $this->getWinner($auction['Auction']['id'], $options);
 		if (!empty($winner)) { // there may not have been a winner
 			$emailarr = $auction + $winner;
 			$this->__sendMail($winner['HighBidder']['email'],'Webpages.Auction Winner Notification', $emailarr);
@@ -183,12 +197,13 @@ class AuctionBid extends AuctionsAppModel {
 
 /**
  * Get Winner method
- * Find the highest bid and return the bid and the user. 
+ * Find the highest bid and return the bid and the user.
+ * @param string $auctionId
+ * @param array $options
+ * @return type
  */
 	public function getWinner($auctionId, $options = array()) {
-		return $this->find('first', array('conditions' => array('AuctionBid.auction_id' => $auctionId), 'contain' => array('HighBidder'))); 
-		
+		return $this->find('first', array('conditions' => array('AuctionBid.auction_id' => $auctionId), 'contain' => array('HighBidder')));
 	}
-	
-	
+
 }
